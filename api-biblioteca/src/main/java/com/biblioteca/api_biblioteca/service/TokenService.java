@@ -23,6 +23,7 @@ public class TokenService {
                 .setSubject(usuario.getUsuTxEmail())
                 .claim("id", usuario.getUsuNrId())
                 .claim("perfil", usuario.getUsuTxPerfil())
+                .claim("nome",usuario.getUsuTxNome())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiracaoEmMillis))
                 .signWith(getChaveAssinatura(),SignatureAlgorithm.HS256)

@@ -29,4 +29,30 @@ public class UsuarioController {
         List<Usuario> usuarios = usuarioRepository.findAll();
         return ResponseEntity.ok(usuarios);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id){
+        return usuarioRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id){
+        usuarioRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioAtualizado){
+        return usuarioRepository.findById(id)
+                .map(usuarioExistente -> {
+                    usuarioExistente.setUsuTxNome(usuarioAtualizado.getUsuTxNome());
+                    usuarioExistente.setUsuTxEmail(usuarioAtualizado.getUsuTxEmail());
+
+                    Usuario salvo = usuarioService.salvarUsuario(usuarioExistente);
+                    return ResponseEntity.ok(salvo);
+        })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
