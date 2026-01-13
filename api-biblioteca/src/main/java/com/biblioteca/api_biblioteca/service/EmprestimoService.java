@@ -1,0 +1,48 @@
+package com.biblioteca.api_biblioteca.service;
+
+import com.biblioteca.api_biblioteca.dto.EmprestimoDTO;
+import com.biblioteca.api_biblioteca.model.Emprestimo;
+import com.biblioteca.api_biblioteca.model.Livro;
+import com.biblioteca.api_biblioteca.model.StatusEmprestimo;
+import com.biblioteca.api_biblioteca.model.Usuario;
+import com.biblioteca.api_biblioteca.repository.EmprestimoRepository;
+import com.biblioteca.api_biblioteca.repository.LivroRepository;
+import com.biblioteca.api_biblioteca.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class EmprestimoService {
+
+    @Autowired
+    private EmprestimoRepository emprestimoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private LivroRepository livroRepository;
+
+    public Emprestimo salvar(EmprestimoDTO dto){
+        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
+                .orElseThrow(()-> new RuntimeException("Usuário não encontrado!"));
+        Livro livro = livroRepository.findById(dto.getIdLivro())
+                .orElseThrow(()-> new RuntimeException("Livro não encontrado"));
+
+        Emprestimo emprestimo = new Emprestimo();
+        emprestimo.setUsuNr(usuario);
+        emprestimo.setLivNr(livro);
+        emprestimo.setEmpDtEmprestimo(LocalDate.now());
+        emprestimo.setEmpDtDevolucaoPrevista(LocalDate.now().plusDays(7));
+        emprestimo.setEmpTxStatus(StatusEmprestimo.ATIVO);
+
+        return emprestimoRepository.save(emprestimo);
+    }
+
+    public List<Emprestimo> listarTodos(){
+        return emprestimoRepository.findAll();
+    }
+}

@@ -31,6 +31,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/livros").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/livros").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/livros/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/emprestimos").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/emprestimos").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

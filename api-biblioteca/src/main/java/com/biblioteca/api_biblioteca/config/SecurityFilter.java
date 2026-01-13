@@ -33,7 +33,7 @@ public class SecurityFilter extends OncePerRequestFilter{
                 Usuario usuario = usuarioRepository.findByUsuTxEmail(subject).orElse(null);
 
                 if (usuario != null) {
-                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, null);
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
