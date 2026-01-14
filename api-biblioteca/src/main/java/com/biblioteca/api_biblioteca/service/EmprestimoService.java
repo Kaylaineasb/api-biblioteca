@@ -32,6 +32,10 @@ public class EmprestimoService {
         Livro livro = livroRepository.findById(dto.getIdLivro())
                 .orElseThrow(()-> new RuntimeException("Livro não encontrado"));
 
+        if(emprestimoRepository.existsByLivNrAndEmpTxStatus(livro, StatusEmprestimo.ATIVO)){
+            throw new RuntimeException("Este livro já está emprestado e indisponível no momento");
+        }
+
         Emprestimo emprestimo = new Emprestimo();
         emprestimo.setUsuNr(usuario);
         emprestimo.setLivNr(livro);
