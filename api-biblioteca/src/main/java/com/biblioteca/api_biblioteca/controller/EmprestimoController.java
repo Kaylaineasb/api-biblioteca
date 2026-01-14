@@ -27,4 +27,11 @@ public class EmprestimoController {
     public List<Emprestimo> listar(){
         return emprestimoService.listarTodos();
     }
+
+    @PutMapping("/{id}/devolucao")
+    public ResponseEntity<Void> devolver(@PathVariable Long id) {
+        emprestimoService.realizarDevolucao(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

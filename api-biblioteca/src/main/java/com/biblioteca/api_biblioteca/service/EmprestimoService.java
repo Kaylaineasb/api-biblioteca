@@ -45,4 +45,18 @@ public class EmprestimoService {
     public List<Emprestimo> listarTodos(){
         return emprestimoRepository.findAll();
     }
+
+    public void realizarDevolucao(Long idEmprestimo){
+        Emprestimo emprestimo = emprestimoRepository.findById(idEmprestimo)
+                .orElseThrow(()-> new RuntimeException("Emprestimo não encontrado!"));
+
+        if(emprestimo.getEmpTxStatus() == StatusEmprestimo.DEVOLVIDO){
+            throw new RuntimeException("Este livro já foi devolvido!");
+        }
+
+        emprestimo.setEmpDtDevolucaoReal(LocalDate.now());
+        emprestimo.setEmpTxStatus(StatusEmprestimo.DEVOLVIDO);
+
+        emprestimoRepository.save(emprestimo);
+    }
 }
