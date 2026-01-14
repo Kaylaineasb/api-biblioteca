@@ -63,4 +63,8 @@ public class EmprestimoService {
 
         emprestimoRepository.save(emprestimo);
     }
+
+    public List<Emprestimo> listarPorUsuario(Usuario usuario){
+        return emprestimoRepository.findByUsuNr(usuario);
+    }
 }
