@@ -37,6 +37,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/emprestimos").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/emprestimos").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/dashboard").hasAuthority("ADMIN")
+                        .requestMatchers(
+                            "/docs",
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
