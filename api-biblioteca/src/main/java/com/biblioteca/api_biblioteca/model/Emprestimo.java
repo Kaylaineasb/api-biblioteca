@@ -34,4 +34,7 @@ public class Emprestimo {
     @Enumerated(EnumType.STRING)
     @Column(name = "empTxStatus")
     private StatusEmprestimo empTxStatus;
+
+    @Column(name = "empNrRenovacoes")
+    private Integer empNrRenovacoes = 0;
 }

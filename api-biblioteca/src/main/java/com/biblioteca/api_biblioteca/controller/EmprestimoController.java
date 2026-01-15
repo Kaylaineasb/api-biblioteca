@@ -45,4 +45,10 @@ public class EmprestimoController {
         return  emprestimoService.listarPorUsuario(usuarioLogado);
     }
 
+    @PutMapping("/{id}/renovacao")
+    public ResponseEntity<Void> renovar(@PathVariable Long id) {
+        emprestimoService.renovar(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

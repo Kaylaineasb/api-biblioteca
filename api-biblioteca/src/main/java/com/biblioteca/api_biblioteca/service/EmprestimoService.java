@@ -67,4 +67,23 @@ public class EmprestimoService {
     public List<Emprestimo> listarPorUsuario(Usuario usuario){
         return emprestimoRepository.findByUsuNr(usuario);
     }
+
+    public void renovar(Long idEmprestimo){
+        Emprestimo emprestimo = emprestimoRepository.findById(idEmprestimo)
+                .orElseThrow(()-> new RuntimeException(("Emprestimo não encontrado!")));
+        if(emprestimo.getEmpTxStatus() != StatusEmprestimo.ATIVO){
+            throw new RuntimeException("Não é possível renovar um empréstimo devolvido.");
+        }
+        if(emprestimo.getEmpDtDevolucaoPrevista().isBefore(LocalDate.now())){
+            throw new RuntimeException("Livro em atraso! Devolva o livro para regularizar.");
+        }
+        int renovacoes = emprestimo.getEmpNrRenovacoes() == null ? 0 : emprestimo.getEmpNrRenovacoes();
+        if(renovacoes >= 3){
+            throw new RuntimeException("Limite de 3 renovações atingido. É necessário devolver.");
+        }
+
+        emprestimo.setEmpDtDevolucaoPrevista(emprestimo.getEmpDtDevolucaoPrevista().plusDays(7));
+        emprestimo.setEmpNrRenovacoes(renovacoes+1);
+        emprestimoRepository.save(emprestimo);
+    }
 }
