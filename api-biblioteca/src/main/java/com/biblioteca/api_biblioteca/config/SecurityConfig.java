@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/livros/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/emprestimos").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/emprestimos").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/dashboard").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
