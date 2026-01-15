@@ -27,4 +27,15 @@ public class Livro {
 
     @Column(name = "livDtPublicacao")
     private LocalDate livDtPublicacao;
+
+    @Transient
+    private boolean disponível;
+
+    public boolean isDisponivel(){
+        return disponível;
+    }
+
+    public void setDisponivel(boolean disponivel){
+        this.disponível = disponivel;
+    }
 }
