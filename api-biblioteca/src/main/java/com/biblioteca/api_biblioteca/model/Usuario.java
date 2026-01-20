@@ -37,6 +37,12 @@ public class Usuario implements UserDetails {
     @Column(name="usuDtCadastro", updatable = false)
     private LocalDateTime usuDtCadastro;
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "token_expiry_date")
+    private LocalDateTime tokenExpiryDate;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.usuTxPerfil == Perfil.ADMIN){
