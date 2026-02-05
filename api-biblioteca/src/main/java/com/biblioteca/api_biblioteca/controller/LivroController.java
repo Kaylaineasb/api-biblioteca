@@ -1,11 +1,15 @@
 package com.biblioteca.api_biblioteca.controller;
 
+import com.biblioteca.api_biblioteca.dto.LivroDTO;
 import com.biblioteca.api_biblioteca.model.Livro;
 import com.biblioteca.api_biblioteca.service.LivroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +26,6 @@ public class LivroController {
 
     @Autowired
     private LivroService livroService;
-
-    @GetMapping
-    @Operation(summary = "Listar Acervo", description = "Retorna todos os livros cadastrados e verifica a disponibilidade de cada um.")
-    public List<Livro> listar(){
-        return livroService.listarTodos();
-    }
 
     @PostMapping
     @Operation(summary = "Cadastrar Livro", description = "Adiciona um novo livro ao banco de dados (Requer perfil ADMIN).")
@@ -65,5 +63,15 @@ public class LivroController {
                     return ResponseEntity.ok(livroSalvo);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<LivroDTO>> listar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String q) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(livroService.listar(q, pageable));
     }
 }

@@ -1,10 +1,13 @@
 package com.biblioteca.api_biblioteca.service;
 
+import com.biblioteca.api_biblioteca.dto.LivroDTO;
 import com.biblioteca.api_biblioteca.model.Livro;
 import com.biblioteca.api_biblioteca.model.StatusEmprestimo;
 import com.biblioteca.api_biblioteca.repository.EmprestimoRepository;
 import com.biblioteca.api_biblioteca.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,5 +44,24 @@ public class LivroService {
 
     public void deletar(Long id) {
         livroRepository.deleteById(id);
+    }
+
+    public Page<LivroDTO> listar(String filtro, Pageable pageable) {
+        Page<Livro> paginaLivros;
+
+        if (filtro == null || filtro.isBlank()) {
+            paginaLivros = livroRepository.findAll(pageable);
+        } else {
+            paginaLivros = livroRepository.findByLivTxTituloContainingIgnoreCase(filtro, pageable);
+        }
+
+        return paginaLivros.map(livro -> {
+            boolean estaEmprestado = emprestimoRepository.existsByLivNrAndEmpTxStatus(
+                    livro,
+                    StatusEmprestimo.ATIVO
+            );
+            livro.setDisponivel(!estaEmprestado);
+            return new LivroDTO(livro);
+        });
     }
 }
