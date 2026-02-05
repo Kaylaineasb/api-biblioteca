@@ -2,6 +2,8 @@ package com.biblioteca.api_biblioteca.service;
 import com.biblioteca.api_biblioteca.model.Usuario;
 import com.biblioteca.api_biblioteca.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +60,14 @@ public class UsuarioService {
         usuario.setTokenExpiryDate(null);
 
         usuarioRepository.save(usuario);
+    }
+
+    public Page<Usuario> listar(String filtro, Pageable pageable) {
+        if (filtro == null || filtro.isBlank()) {
+            return usuarioRepository.findAll(pageable);
+        } else {
+            return usuarioRepository.findByUsuTxNomeContainingIgnoreCaseOrUsuTxEmailContainingIgnoreCase(
+                    filtro, filtro, pageable);
+        }
     }
 }

@@ -7,6 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +35,15 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar Usuários", description = "Retorna a lista de todos os usuários cadastrados no sistema.")
-    public ResponseEntity<List<Usuario>> listarUsuarios(){
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return ResponseEntity.ok(usuarios);
+    @Operation(summary = "Listar Usuários", description = "Retorna lista paginada de usuários.")
+    public ResponseEntity<Page<Usuario>> listarUsuarios(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String q // Filtro de busca
+    ){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("usuNrId").descending());
+
+        return ResponseEntity.ok(usuarioService.listar(q, pageable));
     }
 
     @GetMapping("/{id}")

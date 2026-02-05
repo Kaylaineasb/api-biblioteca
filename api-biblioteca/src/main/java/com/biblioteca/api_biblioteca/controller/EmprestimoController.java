@@ -8,6 +8,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,9 +37,14 @@ public class EmprestimoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar Todos", description = "Retorna a lista completa de empréstimos (Histórico).")
-    public List<Emprestimo> listar(){
-        return emprestimoService.listarTodos();
+    @Operation(summary = "Listar Todos", description = "Retorna a lista de empréstimos com paginação.")
+    public ResponseEntity<Page<Emprestimo>> listar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("empNrId").descending());
+
+        return ResponseEntity.ok(emprestimoService.listarTodos(pageable));
     }
 
     @PutMapping("/{id}/devolucao")
@@ -46,12 +55,16 @@ public class EmprestimoController {
     }
 
     @GetMapping("/meus-emprestimos")
-    @Operation(summary = "Meus Empréstimos", description = "Lista apenas os empréstimos do usuário logado (baseado no Token).")
-    public List<Emprestimo> meusEmprestimos() {
+    @Operation(summary = "Meus Empréstimos", description = "Lista paginada dos empréstimos do usuário logado.")
+    public ResponseEntity<Page<Emprestimo>> meusEmprestimos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuarioLogado = (Usuario) auth.getPrincipal();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("empDtEmprestimo").descending());
 
-        return  emprestimoService.listarPorUsuario(usuarioLogado);
+        return ResponseEntity.ok(emprestimoService.listarPorUsuario(usuarioLogado, pageable));
     }
 
     @PutMapping("/{id}/renovacao")

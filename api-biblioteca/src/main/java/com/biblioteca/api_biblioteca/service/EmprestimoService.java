@@ -9,6 +9,8 @@ import com.biblioteca.api_biblioteca.repository.EmprestimoRepository;
 import com.biblioteca.api_biblioteca.repository.LivroRepository;
 import com.biblioteca.api_biblioteca.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,8 +48,8 @@ public class EmprestimoService {
         return emprestimoRepository.save(emprestimo);
     }
 
-    public List<Emprestimo> listarTodos(){
-        return emprestimoRepository.findAll();
+    public Page<Emprestimo> listarTodos(Pageable pageable){
+        return emprestimoRepository.findAll(pageable);
     }
 
     public void realizarDevolucao(Long idEmprestimo){
@@ -64,8 +66,8 @@ public class EmprestimoService {
         emprestimoRepository.save(emprestimo);
     }
 
-    public List<Emprestimo> listarPorUsuario(Usuario usuario){
-        return emprestimoRepository.findByUsuNr(usuario);
+    public Page<Emprestimo> listarPorUsuario(Usuario usuario, Pageable pageable){
+        return emprestimoRepository.findByUsuNr(usuario,pageable);
     }
 
     public void renovar(Long idEmprestimo){
